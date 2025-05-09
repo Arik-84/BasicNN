@@ -57,7 +57,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr = 0.01)
 epachs = 100
 losses = []
 
-for i in range(epachs):
+for i in range(epachs):  
     y_pred = model.forward(X_train)   # go 'forward' and get a prediction
     loss = criterion(y_pred, y_train) # measure the loss...the predicted value vs the training value
     losses.append(loss.detach().numpy())
@@ -66,7 +66,7 @@ for i in range(epachs):
         print(f'Epoch: {i} loss: {loss}')
 
 
-    #do backpropagation
+    #do backpropagation 
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
@@ -75,6 +75,23 @@ for i in range(epachs):
 plt.plot(range(epachs),losses)
 plt.ylabel('loss/error')
 plt.xlabel('epoch')
+
+with torch.no_grad(): #turn off the backpropagation
+    y_eval = model.forward(X_test) #X_test are features from out test set, y_eval will be predicitons
+    loss = criterion(y_eval, y_test)
+    print(loss)
+
+correct  = 0
+with torch.no_grad():
+    for i, data in enumerate(X_test):
+        y_val = model.forward(data)
+
+        print(f'{i+1}.) {str(y_val)} \t {y_test[i]}')  #what type of flower our netwrok thinks it is
+
+        if y_val.argmax().item() == y_test[i]:
+            correct += 1
+    
+print(f'We got {correct} correct')
 
 
 
